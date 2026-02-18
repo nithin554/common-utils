@@ -7,6 +7,10 @@ on:
 jobs:
   compile:
     runs-on: ubuntu-latest
+    environment: npmjs-publish
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,3 +32,32 @@ jobs:
       - name: Run Build
         shell: bash
         run: pnpm run build
+
+      - name: Create tag
+        id: tag
+        shell: bash
+        run: |
+          # get latest commit SHA
+          COMMIT_SHA=$(git rev-parse HEAD)
+          PREVIOUS_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
+          # generate tag
+          TAG="$(node .github/scripts/generate-version $PREVIOUS_TAG patch)"
+          echo "Tagging commit $COMMIT_SHA with $TAG"
+          git tag $TAG $COMMIT_SHA
+          git push origin $TAG
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Create release
+        shell: bash
+        run: |
+          gh release create ${{ steps.tag.outputs.tag }} \
+            --title "${{ steps.tag.outputs.tag }}" \
+            --notes "Automated release for latest commit after merge"
+
+      - name: Set package version
+        shell: bash
+        run: npm version ${{ steps.tag.outputs.tag }}
+
+      - name: Publish to registry
+        shell: bash
+        run: npm publish --access public
