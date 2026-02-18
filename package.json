@@ -1,0 +1,27 @@
+{
+  "name": "@nithin554/common-utils",
+  "version": "1.0.1",
+  "description": "common utility functions",
+  "homepage": "https://github.com/nithin554/common-utils#readme",
+  "bugs": {
+    "url": "https://github.com/nithin554/common-utils/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nithin554/common-utils.git"
+  },
+  "license": "MIT",
+  "author": "nithin554",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
