@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
 
       - name: Setup pnpm
         shell: bash
@@ -38,6 +40,7 @@ jobs:
         shell: bash
         run: |
           # get latest commit SHA
+          git fetch --tags
           COMMIT_SHA=$(git rev-parse HEAD)
           PREVIOUS_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
           # generate tag
